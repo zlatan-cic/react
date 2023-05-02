@@ -2,6 +2,8 @@ import './index.css';
 import Employee from './components/Employee';
 import { useState } from 'react';
 import {v4 as uuidv4} from 'uuid';
+import AddEmployee from './components/AddEmployee';
+import EditEmployee from './components/EditEmployee';
 
 function App() {
   const [role, setRole] = useState('dev');
@@ -45,6 +47,29 @@ function App() {
       },
     ]
   )
+  function updateEmployee(id,newName, newRole){
+    // console.log("Update employee inside of App.js");
+    const updatedEmployees = employees.map((employee) => {
+      if(id === employee.id){
+        // Return New 
+        return {...employee, name: newName, role:newRole};
+      }
+
+      return employee;
+    });
+    setEmployees(updatedEmployees);
+  }
+
+  function newEmployee(name,role,img){
+    const newEmployee = {
+      id: uuidv4(),
+      name: name,
+      role: role,
+      img: img,
+    }
+    setEmployees([...employees, newEmployee])
+  }
+
   const showEmployee = true;
   return (
     <div className="App ">
@@ -59,19 +84,29 @@ function App() {
         <div className='flex flex-wrap justify-center '>
           {employees.map((employee) => {
             // console.log(employee);
+            const editEmployee = <EditEmployee 
+            id={employee.id}
+              name={employee.name} 
+              role={employee.role}
+              updateEmployee={updateEmployee}
+            /> 
             return (
               <Employee 
-                  key={uuidv4()}
+                  key={employee.id}
+                  id={employee.id}
                   name={employee.name} 
                   role={employee.role}
                   img={employee.img}
+                  editEmployee={editEmployee}
               />
             );
           })}
         </div>
+        <AddEmployee newEmployee={newEmployee} />
         </>
-        :
-        <p>You cannot see the employee</p>
+        : (
+          <p>You cannot see the employee</p>
+        )
       }
     </div>
   );
